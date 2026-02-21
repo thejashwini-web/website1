@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Quiz</title>
+    <style>
+        body {
+            font-family: Arial;
+            text-align: center;
+            background-color: #f4f4f4;
+        }
+        .quiz-box {
+            background: white;
+            padding: 20px;
+            width: 400px;
+            margin: auto;
+            margin-top: 50px;
+            border-radius: 10px;
+        }
+        button {
+            margin-top: 10px;
+            padding: 8px 15px;
+        }
+    </style>
+</head>
+<body oncontextmenu="return false">
+
+<div class="quiz-box">
+    <h2>Online Quiz</h2>
+    <div id="timer">Time Left: 30s</div>
+    <h3 id="question"></h3>
+
+    <input type="radio" name="answer" value="0"> <span id="opt0"></span><br>
+    <input type="radio" name="answer" value="1"> <span id="opt1"></span><br>
+    <input type="radio" name="answer" value="2"> <span id="opt2"></span><br>
+    <input type="radio" name="answer" value="3"> <span id="opt3"></span><br>
+
+    <button onclick="nextQuestion()">Next</button>
+</div>
+
+<script>
+// Questions
+const quizData = [
+    {
+        question: "What does HTML stand for?",
+        options: [
+            "Hyper Text Markup Language",
+            "High Tech Modern Language",
+            "Home Tool Markup Language",
+            "Hyperlinks and Text Machine Language"
+        ],
+        correct: 0
+    },
+    {
+        question: "Which tag is used for JavaScript?",
+        options: ["<js>", "<script>", "<javascript>", "<code>"],
+        correct: 1
+    }
+];
+
+let currentQuestion = 0;
+let score = 0;
+let timeLeft = 30;
+
+// Load question
+function loadQuestion() {
+    document.getElementById("question").innerText = quizData[currentQuestion].question;
+    document.getElementById("opt0").innerText = quizData[currentQuestion].options[0];
+    document.getElementById("opt1").innerText = quizData[currentQuestion].options[1];
+    document.getElementById("opt2").innerText = quizData[currentQuestion].options[2];
+    document.getElementById("opt3").innerText = quizData[currentQuestion].options[3];
+}
+
+function nextQuestion() {
+    const answers = document.getElementsByName("answer");
+    let selected = -1;
+
+    for (let i = 0; i < answers.length; i++) {
+        if (answers[i].checked) {
+            selected = i;
+        }
+        answers[i].checked = false;
+    }
+
+    if (selected === quizData[currentQuestion].correct) {
+        score++;
+    }
+
+    currentQuestion++;
+
+    if (currentQuestion < quizData.length) {
+        loadQuestion();
+    } else {
+        alert("Quiz Finished! Your Score: " + score);
+        location.reload();
+    }
+}
+
+// Timer
+setInterval(function () {
+    timeLeft--;
+    document.getElementById("timer").innerText = "Time Left: " + timeLeft + "s";
+    if (timeLeft <= 0) {
+        alert("Time Up! Quiz Auto Submitted.");
+        location.reload();
+    }
+}, 1000);
+
+// Anti-Cheating: Tab switch detection
+document.addEventListener("visibilitychange", function() {
+    if (document.hidden) {
+        alert("Tab switching detected! Quiz will be submitted.");
+        location.reload();
+    }
+});
+
+// Disable copy
+document.oncopy = function() {
+    alert("Copying is disabled!");
+    return false;
+};
+
+loadQuestion();
+</script>
+
+</body>
+</html>
